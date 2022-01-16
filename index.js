@@ -16,6 +16,10 @@ async function main() {
         }
 
     })
+    await browser.runtime.openOptionsPage()
 }
+
+// TODO rerun addListener smartly (remove provious one ...)
+browser.storage.onChanged.addListener((changes) => console.log('changes', changes))
 
 main()

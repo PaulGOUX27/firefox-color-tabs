@@ -1,4 +1,5 @@
 const OPTION_NODE_ID = "color-preferences"
+const FORM_NODE_ID = "form"
 
 async function getOptions() {
     const { storage: storageAPI } = browser;
@@ -37,7 +38,9 @@ function createColorPreferenceRow(option) {
     const nodeContainer = document.createElement('div');
 
     const urlInput = createColorPreferenceInput('input', option.url)
-    const colorInput = createColorPreferenceInput('input', option.color)
+    const colorInput = createColorPreferenceInput('input', option.color, {
+        "type": 'color'
+    })
 
     const isRegexAttributes = {
         'type': 'checkbox',
@@ -53,14 +56,37 @@ function createColorPreferenceRow(option) {
 }
 
 function displayOptions(options) {
-    console.log('displayOptions', options)
     const colorPreferencesNode = document.getElementById(OPTION_NODE_ID);
-    options.colorPreferences.forEach((p, index) => {
+    options.colorPreferences.forEach((p) => {
         colorPreferencesNode.appendChild(createColorPreferenceRow(p))
     })
+}
+
+function parseOptions() {
+    const options = {
+        colorPreferences: []
+    }
+    const colorPreferencesNode = document.getElementById(OPTION_NODE_ID);
+    colorPreferencesNode.childNodes.forEach(node => {
+        [urlInput, colorInput, isRegexCheckbox] = node.childNodes
+        const colorPreference = {
+            "url": urlInput.value,
+            "color": colorInput.value,
+            "isRegex": isRegexCheckbox.hasAttribute('checked')
+        }
+        options.colorPreferences.push(colorPreference);
+    })
+    return options;
+}
+
+async function saveOptions() {
+    const { storage: storageAPI } = browser;
+    const options = parseOptions();
+    await storageAPI.local.set(options);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
     const options = await getOptions();
     displayOptions(options);
 });
+document.getElementById(FORM_NODE_ID).addEventListener('submit', saveOptions)
