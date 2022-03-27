@@ -1,5 +1,3 @@
-const { tabs: tabsAPI, theme: themeAPI, storage: storageAPI } = browser;
-
 function isURLMatching(colorPreference, url) {
     if (colorPreference.isRegex) {
         return new RegExp(colorPreference.url).test(url)
@@ -8,6 +6,7 @@ function isURLMatching(colorPreference, url) {
 }
 
 async function main() {
+    const { tabs: tabsAPI, theme: themeAPI, storage: storageAPI } = browser;
     let defaultTheme = await themeAPI.getCurrent(1);
     let options = await storageAPI.local.get('colorPreferences');
 
@@ -16,6 +15,7 @@ async function main() {
         colorPreference = options.colorPreferences.find(cp => isURLMatching(cp, activeTab.url))
 
         if (colorPreference) {
+            // catch warn 1648397675084	addons.webextension.0d955ff196bf6b3162a19258a344eaf07f1936ed@temporary-addon	WARN	Unrecognized theme property found: colors.tab_loading_inactive
             let newTheme = structuredClone(defaultTheme)
             newTheme.colors.tab_selected = colorPreference.color
             themeAPI.update(windowId, newTheme)

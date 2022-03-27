@@ -1,5 +1,7 @@
 const OPTION_NODE_ID = "color-preferences"
 const FORM_NODE_ID = "form"
+const ADD_ROW_ID = "add-row"
+const SUBMIT_BUTTON_ID = "submit"
 
 async function getOptions() {
     const { storage: storageAPI } = browser;
@@ -34,7 +36,15 @@ function createColorPreferenceInput(inputType, value, attributes) {
     return input;
 }
 
-function createColorPreferenceRow(option) {
+function removeRow(index) {
+    getOptions().then(options => {
+        options.colorPreferences.splice(index, 1)
+        displayOptions(options);
+        // saveOptions();
+    })
+}
+
+function createColorPreferenceRow(option, index) {
     const nodeContainer = document.createElement('div');
 
     const urlInput = createColorPreferenceInput('input', option.url)
@@ -50,15 +60,20 @@ function createColorPreferenceRow(option) {
     }
     const isRegexCheckbox = createColorPreferenceInput('input', null, isRegexAttributes)
 
-    nodeContainer.append(urlInput, colorInput, isRegexCheckbox);
+    const removeRowButton = createColorPreferenceInput('button');
+    removeRowButton.innerHTML = "Remove";
+    removeRowButton.addEventListener('click', () => removeRow(index))
+
+    nodeContainer.append(urlInput, colorInput, isRegexCheckbox, removeRowButton);
 
     return nodeContainer
 }
 
 function displayOptions(options) {
     const colorPreferencesNode = document.getElementById(OPTION_NODE_ID);
-    options.colorPreferences.forEach((p) => {
-        colorPreferencesNode.appendChild(createColorPreferenceRow(p))
+    colorPreferencesNode.textContent = null;
+    options.colorPreferences.forEach((p, index) => {
+        colorPreferencesNode.appendChild(createColorPreferenceRow(p, index))
     })
 }
 
@@ -79,14 +94,23 @@ function parseOptions() {
     return options;
 }
 
-async function saveOptions() {
+function saveOptions() {
     const { storage: storageAPI } = browser;
     const options = parseOptions();
-    await storageAPI.local.set(options);
+    storageAPI.local.set(options);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    const options = await getOptions();
-    displayOptions(options);
+document.addEventListener('DOMContentLoaded', () => {
+    getOptions().then(options => {
+        displayOptions(options);
+    });
 });
-document.getElementById(FORM_NODE_ID).addEventListener('submit', saveOptions)
+document.getElementById(SUBMIT_BUTTON_ID).addEventListener('click', saveOptions)
+
+document.getElementById(ADD_ROW_ID).addEventListener('click', () => {
+    getOptions().then(options => {
+        options.colorPreferences.push({})
+        displayOptions(options);
+        // saveOptions();
+    })
+})
