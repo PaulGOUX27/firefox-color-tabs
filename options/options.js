@@ -72,7 +72,7 @@ function parseOptions() {
         const colorPreference = {
             "url": urlInput.value,
             "color": colorInput.value,
-            "isRegex": isRegexCheckbox.hasAttribute('checked')
+            "isRegex": isRegexCheckbox.checked
         }
         options.colorPreferences.push(colorPreference);
     })
