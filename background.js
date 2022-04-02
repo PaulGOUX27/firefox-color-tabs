@@ -30,7 +30,7 @@ async function main() {
     })
 
     tabsAPI.onActivated.addListener(onTabChanged)
-    await browser.runtime.openOptionsPage()
+    // await browser.runtime.openOptionsPage()
 }
 
 main()

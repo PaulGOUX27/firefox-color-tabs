@@ -15,5 +15,8 @@
     ],
     "options_ui": {
         "page": "options/options.html"
+    },
+    "icons": {
+        "48": "icons/icon-48.png"
     }
 }
