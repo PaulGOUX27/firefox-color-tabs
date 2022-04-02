@@ -7,13 +7,8 @@ async function getOptions() {
     const { storage: storageAPI } = browser;
     return storageAPI.local.get({
         colorPreferences: [{
-            "url": "https://github.com/cfinke/True-Colors/blob/master/true-colors/chrome/content/overlay.js",
-            "color": "#972222",
-            "isRegex": false
-        },
-        {
-            "url": "www.wikipedia.fr",
-            "color": "#ffffff",
+            "url": "en.wikipedia.org/*",
+            "color": "#ED760E",
             "isRegex": true
         }]
     })
@@ -47,13 +42,17 @@ function removeRow(index) {
 function createColorPreferenceRow(option, index) {
     const nodeContainer = document.createElement('div');
 
-    const urlInput = createColorPreferenceInput('input', option.url)
+    const urlInput = createColorPreferenceInput('input', option.url, {
+        "class": "url"
+    })
     const colorInput = createColorPreferenceInput('input', option.color, {
-        "type": 'color'
+        "type": 'color',
+        "class": 'color'
     })
 
     const isRegexAttributes = {
         'type': 'checkbox',
+        "class": "regex"
     }
     if (option.isRegex) {
         isRegexAttributes['checked'] = true

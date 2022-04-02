@@ -4,15 +4,42 @@
 
 <head>
     <meta charset="utf-8">
+    <style>
+        .header {
+            display: ruby;
+            font-weight: bold;
+        }
+
+        .url {
+            width: 450px;
+        }
+
+        .color {
+            width: 50px;
+        }
+
+        .regex {
+            width: 20px;
+        }
+
+        button {
+            max-width: 100px;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Color Tabs settings</h1>
+    <div class="header">
+        <div class="url">URL</div>
+        <div class="color">Color</div>
+        <div class="regex">Regex</div>
+    </div>
     <form id="form">
         <div id="color-preferences"></div>
         <button type="submit" id="submit">Save</button>
     </form>
-    <button id="add-row">+</button>
+    <button id="add-row">Add an option</button>
     <script src="options.js"></script>
 </body>
 
