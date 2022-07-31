@@ -6,11 +6,7 @@ const SUBMIT_BUTTON_ID = "submit"
 async function getOptions() {
     const { storage: storageAPI } = browser;
     return storageAPI.local.get({
-        colorPreferences: [{
-            "url": "en.wikipedia.org/*",
-            "color": "#ED760E",
-            "isRegex": true
-        }]
+        colorPreferences: []
     })
 }
 

@@ -8,7 +8,9 @@ function isURLMatching(colorPreference, url) {
 async function main() {
     const { tabs: tabsAPI, theme: themeAPI, storage: storageAPI } = browser;
     let defaultTheme = await themeAPI.getCurrent(1);
-    let options = await storageAPI.local.get('colorPreferences');
+    let options = await storageAPI.local.get({
+        colorPreferences: []
+    });
 
     async function onTabChanged({ tabId, windowId }) {
         const activeTab = await tabsAPI.get(tabId)
