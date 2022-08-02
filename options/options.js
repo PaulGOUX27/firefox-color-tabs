@@ -3,9 +3,11 @@ const FORM_NODE_ID = "form"
 const ADD_ROW_ID = "add-row"
 const SUBMIT_BUTTON_ID = "submit"
 
-async function getOptions() {
+let _options = null;
+
+async function fetchOptions() {
     const { storage: storageAPI } = browser;
-    return storageAPI.local.get({
+    _options = await storageAPI.local.get({
         colorPreferences: []
     })
 }
@@ -27,12 +29,9 @@ function createColorPreferenceInput(inputType, value, attributes) {
     return input;
 }
 
-function removeRow(index) {
-    getOptions().then(options => {
-        options.colorPreferences.splice(index, 1)
-        displayOptions(options);
-        // saveOptions();
-    })
+async function removeRow(index) {
+    _options.colorPreferences.splice(index, 1)
+    await saveOptions();
 }
 
 function createColorPreferenceRow(option, index) {
@@ -57,55 +56,42 @@ function createColorPreferenceRow(option, index) {
 
     const removeRowButton = createColorPreferenceInput('button');
     removeRowButton.innerHTML = "Remove";
-    removeRowButton.addEventListener('click', () => removeRow(index))
+    urlInput.addEventListener('change', event => { option.url = event.target.value })
+    colorInput.addEventListener('change', event => { option.color = event.target.value })
+    isRegexCheckbox.addEventListener('change', () => { console.log(isRegexCheckbox.checked); option.isRegex = isRegexCheckbox.checked })
+    removeRowButton.addEventListener('click', async () => { await removeRow(index) })
 
     nodeContainer.append(urlInput, colorInput, isRegexCheckbox, removeRowButton);
 
     return nodeContainer
 }
 
-function displayOptions(options) {
+function displayOptions() {
     const colorPreferencesNode = document.getElementById(OPTION_NODE_ID);
     colorPreferencesNode.textContent = null;
-    options.colorPreferences.forEach((p, index) => {
+    _options.colorPreferences.forEach((p, index) => {
         colorPreferencesNode.appendChild(createColorPreferenceRow(p, index))
     })
 }
 
-function parseOptions() {
-    const options = {
-        colorPreferences: []
-    }
-    const colorPreferencesNode = document.getElementById(OPTION_NODE_ID);
-    colorPreferencesNode.childNodes.forEach(node => {
-        [urlInput, colorInput, isRegexCheckbox] = node.childNodes
-        const colorPreference = {
-            "url": urlInput.value,
-            "color": colorInput.value,
-            "isRegex": isRegexCheckbox.checked
-        }
-        options.colorPreferences.push(colorPreference);
-    })
-    return options;
-}
-
-function saveOptions() {
+async function saveOptions() {
     const { storage: storageAPI } = browser;
-    const options = parseOptions();
-    storageAPI.local.set(options);
+    await storageAPI.local.set(_options);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    getOptions().then(options => {
-        displayOptions(options);
-    });
-});
+async function addRow() {
+    _options.colorPreferences.push({});
+    await saveOptions();
+    displayOptions();
+}
+
 document.getElementById(SUBMIT_BUTTON_ID).addEventListener('click', saveOptions)
 
-document.getElementById(ADD_ROW_ID).addEventListener('click', () => {
-    getOptions().then(options => {
-        options.colorPreferences.push({})
-        displayOptions(options);
-        // saveOptions();
-    })
-})
+document.getElementById(ADD_ROW_ID).addEventListener('click', addRow)
+
+async function init() {
+    await fetchOptions();
+    displayOptions();
+}
+
+init();
