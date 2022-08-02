@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Color Tabs",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "description": "Firefox tabs custom color based on URL",
     "background": {
         "scripts": [
@@ -14,7 +14,8 @@
         "storage"
     ],
     "options_ui": {
-        "page": "options/options.html"
+        "page": "options/options.html",
+        "browser_style": true
     },
     "icons": {
         "48": "icons/icon-48.png"
