@@ -17,12 +17,12 @@ async function main() {
         colorPreference = options.colorPreferences.find(cp => isURLMatching(cp, activeTab.url))
 
         if (colorPreference) {
-            // catch warn 1648397675084	addons.webextension.0d955ff196bf6b3162a19258a344eaf07f1936ed@temporary-addon	WARN	Unrecognized theme property found: colors.tab_loading_inactive
+            // catch WARN	Unrecognized theme property found: colors.tab_loading_inactive
             let newTheme = structuredClone(defaultTheme)
             newTheme.colors.tab_selected = colorPreference.color
             themeAPI.update(windowId, newTheme)
         } else {
-            // TODO update only if previous had a specific theme+
+            // TODO update only if previous had a specific theme
             themeAPI.update(windowId, defaultTheme)
         }
     }
@@ -32,7 +32,7 @@ async function main() {
     })
 
     tabsAPI.onActivated.addListener(onTabChanged)
-    // await browser.runtime.openOptionsPage()
+    tabsAPI.onUpdated.addListener((tabId, _, { windowId }) => onTabChanged({ tabId, windowId }))
 }
 
 main()
